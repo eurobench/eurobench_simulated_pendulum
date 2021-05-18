@@ -1,0 +1,10 @@
+float32 mass         #of the pendulum in [kg]
+float32 angle        #positive angle wrt normal in [rad]
+float32 latitude     #angle on the normal plane wrt the force is applied in [rad]
+float32 length       #of the pendulum in [m]
+float32 dt           #time of the impact in [sec]
+string body_name    #Gazebo body to apply force
+
+---
+bool success                              # return true if set wrench successful
+string status_message                     # comments if available

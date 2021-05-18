@@ -1,0 +1,38 @@
+import rospy
+from gazebo_msgs.srv import ApplyBodyWrench, ApplyBodyWrenchRequest
+from eurobench_simulated_pendulum.srv import EuroBenchPendulum, EuroBenchPendulumResponse
+import numpy as np
+from geometry_msgs.msg import Point, Wrench
+from std_msgs.msg import Duration, Time
+
+def send_force(req):
+    res = EuroBenchPendulumResponse()
+
+    # force computation
+    force = req.mass * np.sqrt( 2. * 9.81 * req.length * (1. - np.cos(req.angle)) )/req.dt
+    print("Impact Force is %f N at %s"%(force,req.body_name))
+
+    rospy.wait_for_service('/gazebo/apply_body_wrench')
+    try:
+        apply_body_wrench = rospy.ServiceProxy('/gazebo/apply_body_wrench', ApplyBodyWrench)
+        request = ApplyBodyWrenchRequest()
+        request.body_name = req.body_name
+        request.wrench.force.x = force * np.cos(req.latitude)
+        request.wrench.force.y = force * np.sin(req.latitude)
+        request.duration.secs = req.dt
+        res2 = apply_body_wrench(request)
+        res.success = res2.success
+        res.status_message = res2.status_message
+        return res
+    except rospy.ServiceException as e:
+        print("Service call failed: %s" % e)
+
+
+def send_force_server():
+    rospy.init_node('eurobench_simulated_pendulum_node')
+    s = rospy.Service('~apply_body_force', EuroBenchPendulum, send_force)
+    print("eurobench_simulated_pendulum_node ready")
+    rospy.spin()
+
+if __name__ == "__main__":
+    send_force_server()
