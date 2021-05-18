@@ -17,9 +17,9 @@ def send_force(req):
         apply_body_wrench = rospy.ServiceProxy('/gazebo/apply_body_wrench', ApplyBodyWrench)
         request = ApplyBodyWrenchRequest()
         request.body_name = req.body_name
-        request.wrench.force.x = force * np.cos(req.latitude)
-        request.wrench.force.y = force * np.sin(req.latitude)
-        request.duration.secs = req.dt
+        request.wrench.force.x = force * np.cos(req.latitude + np.pi)
+        request.wrench.force.y = force * np.sin(req.latitude + np.pi)
+        request.duration = rospy.Duration.from_sec(req.dt)
         res2 = apply_body_wrench(request)
         res.success = res2.success
         res.status_message = res2.status_message
