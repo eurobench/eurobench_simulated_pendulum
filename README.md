@@ -14,5 +14,6 @@ The ```eurobench_simulated_pendulum``` open a service called ```/eurobench_simul
 - the angle w.r.t. the vertical
 - the angle on the horizontal plane (if 0.0 the pendulum hits the robot on the x coordinates)
 - the time of the impact
+- the body name where the force is applied
 
 The node makes use of the service ```/gazebo/apply_body_wrench```.
